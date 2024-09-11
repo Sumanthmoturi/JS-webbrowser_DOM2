@@ -1,0 +1,56 @@
+<!--Event Handling Chapter-->
+
+
+<!--1.Polling vs Event Handling-->
+           
+
+<!--2.Event Listener and Event Handler-->
+
+<p>Click this document to activate the handler.</p>
+<script>
+    window.addEventListener("click", () => {
+    console.log("You knocked?");
+    });
+</script>
+
+
+
+<!--3.Events and DOM nodes
+
+   1.Event handlers can be registered on different types of DOM nodes.
+   2.This allows specific elements to react to user interactions such as clicks, keypresses, or mouse movements
+   3.Event Listener on a button:  -->
+   <button>Click me</button>
+   <p>No handler here.</p>
+   
+   <script>
+     let buttonEl= document.querySelector("button");
+     buttonEl.addEventListener("click", () => {
+       console.log("Button clicked.");
+     });
+   </script>
+   
+
+
+<!--4.Onclick Attribute vs Event Listener-->
+<!--Onclick attribute-->       
+<button onclick="alert('Button clicked!')">Click me</button>        
+<!--Event Listener-->          
+<script>
+button.addEventListener("click", () => {
+  console.log("Button clicked.");
+});
+</script>
+                                      
+
+<!--5.Removing Event handlers-->
+<button>Act-once button</button>
+<script>
+  let button = document.querySelector("button");
+  function once() {
+    console.log("Done.");
+    button.removeEventListener("click", once); // Remove handler after first click
+  }
+
+  button.addEventListener("click", once);
+</script>

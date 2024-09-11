@@ -1,0 +1,264 @@
+<!--Layout Concept-
+           1.Layout is a pattern by which we structure information and arrange elements on website.So,Structuring and arranging together is called Layout
+-->
+
+<!--1.Block vs Inline elements:
+            1.These elements, like <p> or <h1>, take up the full width of their container.
+                they start on a new line and extend the full width of the container.They are called Block Elements
+            2.Elements like <a> (links) or <strong> are inline, meaning they are displayed on the same line as the surrounding text.   
+-->
+
+<!--2.Layout calculation by browser-
+            1. Browser calculates the layout by by determining 1.Size and 2.Position of every element
+            2. Javascript can access this layout information
+            Size:-Dimensions(height and width) of each element
+            Position:-Position of element
+            -->
+<!--3.Measuring size and postion using JS:-
+            1.JS can access and provide ways to get size and position of element
+            
+            2.offsetWidth and offsetHeight: These properties return the full width and height of the element, including borders and padding, but excluding margins.
+            
+            3.clientWidth and clientHeight: These properties give the dimensions of the element’s content area, excluding borders, scrollbars, and margins. 
+            
+            4.getBoundingClientRect(): This method returns an object with the coordinates (top, bottom, left, right) of the element.
+            
+            5.pageXOffset and pageYOffset: These properties represent how far the document has been scrolled horizontally and vertically, respectively.
+            -->
+            
+            <p style="border: 3px solid red">I'm boxed in</p>
+            <script>
+              let parag = document.body.getElementsByTagName("p")[0];
+              console.log("clientHeight:", parag.clientHeight); // → 19
+              console.log("offsetHeight:", parag.offsetHeight); // → 25
+            </script>
+
+           
+<!--4.Layout computation
+            1.Layout computation is resource-intensive. To optimize performance, browsers try to minimize recalculating the layout. 
+              They do not immediately update the layout with every change; instead, they wait until changes are finished, and then update all at once. 
+              This is known as batching the layout computations.
+-->
+
+<!--5.Layout tharshing:-
+            1.if a script alternates between reading layout information (like offsetWidth) and changing the DOM, the browser is forced to compute the layout multiple times, leading to performance issues. 
+              This is known as layout thrashing.
+-->
+
+<!--naive approach
+time("naive", () => {
+    let target = document.getElementById("one");
+    
+    // Naive approach: Adds one "X" at a time and checks the width of the element after each addition.
+    // Each time `offsetWidth` is accessed, the browser has to recalculate the layout.
+    // This forces a re-layout on every loop iteration, making it slow.
+    while (target.offsetWidth < 2000) {
+      target.appendChild(document.createTextNode("X"));
+    }
+    });     // → naive took 32 ms
+-->  
+
+<!--Clever appproach
+time("clever", function() {
+    let target = document.getElementById("two");
+    // Clever approach: Instead of adding one "X" at a time, we first append a chunk of text.
+    target.appendChild(document.createTextNode("XXXXX")); // Add 5 "X"s initially
+    // Calculate how many "X"s are needed to fill 2000 pixels.
+    // `target.offsetWidth / 5` gives the width of one "X" based on the initial 5 "X"s.
+    let total = Math.ceil(2000 / (target.offsetWidth / 5)); // Calculate how many "X"s are needed to reach 2000 pixels
+    
+    // Set the text content to the required number of "X"s all at once, avoiding repeated layout recalculations.
+    target.firstChild.nodeValue = "X".repeat(total); // Add the exact number of "X"s in one step
+  });  // → clever took 1 ms
+-->  
+
+
+
+
+<!--2.Styling concept-->
+
+<!--1.Style attribute:-
+                    1.You can modify the styling of any HTML element by using the style attribute directly in the HTML. 
+                    2.This attribute allows you to apply inline CSS to elements.
+                    3.Example:- 
+--> 
+                                <p><a href=".">Normal link</a></p>
+                                <p><a href="." style="color: green">Green link</a></p>
+
+<!--2.Display property:-
+                    1.The display property controls how an element is laid out on the page.
+                    2.There are three important values for the display property
+                                ->Inline-The element is displayed as inline
+                                ->BLock-The element is displayed as Block
+                                ->None-The element is not displayed at all,but  hidden still exists in document
+                    3.Example:-    
+-->            
+                                <strong>inline</strong>,
+                                <strong style="display: block">as a block</strong>, and
+                                <strong style="display: none">not at all</strong>.
+
+<!--3.Style property in JS:-
+                    1.In JS,you can access and manipulate styles of an element using its style property. 
+                    2.This property is an object that holds all the CSS properties that can be applied to an element.
+                    3.Example:-
+-->     
+                    <p id="para" style="color: purple">Nice text</p>
+                             <script>
+                                let para = document.getElementById("para");
+                                console.log(para.style.color); 
+                                para.style.color = "magenta";  
+                                </script>
+                    
+
+<!--4.Handling Hyphenated properties in JS:-
+                    1.JavaScript automatically converts these CSS property names to camelCase
+                    2.font-family becomes fontFamily.
+                      background-color becomes backgroundColor.
+                    2.Example:
+                            para.style.fontFamily = "Arial"; // Changes font to Arial
+                            para.style.backgroundColor = "yellow"; // Sets background color to yellow
+-->
+
+
+
+
+
+<!--3.CSS concept-->
+<!--CSS(Cascading Style Sheets):-
+                    1.CSS is used for styling of html elements on a webpage
+                    2.It will be given inside <style>  tag
+                    3.It consists of selector,propery and value in its syntax
+                    4.Example:-
+-->    
+                    <style>
+                                strong {
+                                  font-style: italic;
+                                  color: gray;
+                                } 
+                            </style>
+                            <p>Now <strong>strong text</strong> is italic and gray.</p>
+
+<!--Cascading behaviour in CSS:-
+                    1.Precedence: If multiple rules define a style for the same property, the most recently defined rule takes precedence, as long as the specificity of the rules is the same.
+                        Example:-
+-->    
+                        <style>
+                                        strong {
+                                        color: gray;
+                                        }
+                                        strong {
+                                        color: blue;
+                                        }
+                                    </style>
+                                   <p><strong>This text is blue.</strong></p>
+                    <!--2.Specificity:-  ID selector>Class Selector>TagName Selector  specificities -->
+                    <!--3.Inline Styles: Styles applied directly to an element using the style attribute in HTML have the highest precedence
+                        Example:- -->  
+                                <p style="color: green">This text is green.</p>
+                    <!--4.Descendant and Child Selectors:-
+                        ->Descendant selector(p a)Targets all <a> tags that are inside <p> tags, whether directly or nested deeper within other elements.
+                        ->Child Selectors(p>a)Targets only <a> tags that are direct children of a <p> tag.
+                        ->Example:-   --> 
+                                p a {
+                                    color: blue;
+                                    }
+                                p > a {
+                                    font-weight: bold;
+                                }
+
+
+
+
+
+<!--4.Query Selectors -->
+<!--1.Query Selectors:-
+                    1.Query selectors allow us to efficiently locate and manipulate HTML elements using the same syntax we use in CSS. 
+                    2.The querySelectorAll and querySelector methods,available on both the document and individual elements, let you find elements by CSS selector strings.
+-->
+<!--2.QuerySelectorAll method:-
+                    1.The querySelectorAll method allows you to select all elements in the DOM that match a given CSS selector
+                    2.It returns a NodeList—an array-like collection of nodes. 
+                    3.this NodeList is not live, meaning it won’t automatically update if the DOM changes.
+                    4.Example:-
+-->    
+                    <p>And if you go chasing<span class="animal">rabbits</span></p>
+                           <p>And you know you're going to fall</p>
+                           <p>Tell 'em a <span class="character">hookah smoking
+                           <span class="animal">caterpillar</span></span></p>
+                           <p>Has given you the call</p>
+                           <script>
+                                function count(selector) {
+                                return document.querySelectorAll(selector).length;
+                                }
+                            console.log(count("p"));           
+                            console.log(count(".animal"));            
+                            console.log(count("p .animal"));           
+                            console.log(count("p > .animal"))         
+                            </script>
+<!--3.Using nodeLists in querySelectorAll:-
+                    1.Though querySelectorAll returns a NodeList, this is not a true array. T
+                    2.you need to convert it into an actual array using Array.from() to use array methods like  forEach,map,filter.
+                    3.Example:
+-->                             <script>
+                                let animals = document.querySelectorAll(".animal");
+                                let animalsArray = Array.from(animals);
+                                animalsArray.forEach(animal => console.log(animal.textContent));
+                                </script>
+<!--4.querySelector method:-
+                    1.The querySelector method works similarly to querySelectorAll,
+                    2.It returns only the first matching element.If no element matches the selector, it returns null.
+                    3.Example:
+-->.
+                            <script>
+                               let firstAnimal = document.querySelector(".animal");
+                               console.log(firstAnimal.textContent);
+                            </script>      
+
+
+
+
+
+
+<!--5.Positioning and Animating in JS-->
+<!--1.Position property:-
+                    1.The position style property in CSS determines how an element is placed on the page
+                    2.It has several values that define different types of positioning:
+                             ->Static(default)-The element follows the normal flow of the document.
+                             ->relative- The element is positioned relative to its normalposition.You can adjust it using the top, left, right, or bottom properties
+                             ->absolute-The element is positioned relative to the nearest positioned ancestor(an ancestor with a position value other than static)
+                             ->fixed- The element is positioned relative to the browser window and stays fixed even when the page is scrolled.
+                             ->sticky-The element toggles between relative and fixed positioning, depending on the user's scroll position.
+-->
+<!--2.Math and animation:-
+                    1. the trigonometric functions Math.sin and Math.cos are used to create motion along a circular path. 
+                    2.Math.sin(angle) gives the y-coordinate on a circle,(angle) is measured in radians(0to2π for a fullcircle).
+                    3.Math.cos(angle) gives the x-coordinate on the circle.
+-->
+<!--3.requestAnimationFrame method:-
+                    1.requestAnimationFrame is a method that asks the browser to call a specified function to update animations before the next repaint (about 60 times per second).
+                    2.It allows smooth animations by updating the screen when the browser is ready
+                    3.It prevents freezing
+                    4.Example:-
+                        -->
+                          
+                            <p style="text-align: center">
+                            <img src="img/cat.png" style="position: relative">
+                            </p>
+
+                            <script>
+                                let cat = document.querySelector("img");
+                                let angle = Math.PI / 2;
+
+                                function animate(time, lastTime) {
+                                if (lastTime != null) {
+                                angle += (time - lastTime) * 0.001; 
+                                }
+
+                                cat.style.top = (Math.sin(angle) * 20) + "px";  
+                                cat.style.left = (Math.cos(angle) * 200) + "px"; 
+
+                                requestAnimationFrame(newTime => animate(newTime, time)); 
+                                }
+                                requestAnimationFrame(animate); // Start the animation
+                            </script>
+
